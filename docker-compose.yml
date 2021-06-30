@@ -1,31 +1,24 @@
-version: '3.7'
+version: "3.8"
 
 services:
-  database:
+  postgres:
     image: postgres
-    container_name: database_gcb_test
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=doctors_api
-    volumes:
-      - pgdata:/data/postgres
 
-  app:
-    build: .
-    container_name: gcb_test
-    ports:
-      - 3333:3333
-    volumes:
-      - .:/usr/app
-    links:
-      - database
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
     depends_on:
-      - database
-
-volumes:
-  pgdata:
-    driver: local
+      - postgres
+    environment:
+      DATABASE_URL: postgres://postgres:docker@postgres:5432/doctors_api
+      PORT: 3000
+    ports:
+      - "3000:3000"

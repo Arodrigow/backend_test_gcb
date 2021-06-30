@@ -1,15 +1,11 @@
 {
+  "type": "postgres",
+
   "username": "postgres",
   "password": "docker",
-
-  "name": "default",
-  "type": "postgres",
-  "host": "localhost",
-  "port": 5432,
   "database": "doctors_api",
-  "entities": ["./src/**/entities/*.entity.ts"],
-  "migrations": ["./src/database/migrations/*.ts"],
+  "migrations": ["dist/database/migrations/*{.ts,.js}"],
   "cli": {
-    "migrationsDir": "./src/database/migrations"
+    "migrationsDir": "dist/database/migrations"
   }
 }
