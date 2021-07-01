@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { DoctorModule } from './doctor/doctor.module';
+import { DoctorModule } from './modules/doctor/doctor.module';
+import { SpecialtiesModule } from './modules/specialties/specialties.module';
 
 
 @Module({
@@ -15,8 +16,14 @@ import { DoctorModule } from './doctor/doctor.module';
       url: process.env.DATABASE_URL,
       autoLoadEntities: false,
       synchronize: false,
-      entities: [__dirname + "/**/entities/*.entity{.ts,.js}"],
-    })],
+      database: "doctors_api",
+      migrations: [__dirname + "/database/migrations/*{.ts,.js}"],
+      cli: {
+        "migrationsDir": __dirname + "/database/migrations"
+      },
+      entities: [__dirname + "/modules/**/entities/*.entity{.ts,.js}"],
+    }),
+    SpecialtiesModule],
   controllers: [],
   providers: [],
 })
