@@ -4,8 +4,8 @@
   "username": "postgres",
   "password": "docker",
   "database": "doctors_api",
-  "migrations": ["dist/database/migrations/*{.ts,.js}"],
+  "migrations": ["src/database/migrations/*{.ts,.js}"],
   "cli": {
-    "migrationsDir": "dist/database/migrations"
+    "migrationsDir": "src/database/migrations"
   }
 }
