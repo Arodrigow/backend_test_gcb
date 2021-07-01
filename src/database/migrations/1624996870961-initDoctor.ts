@@ -25,6 +25,18 @@ export class DoctorInit1624989539133 implements MigrationInterface {
                 name: "cep",
                 type: "varchar"
             }, {
+                name: "end",
+                type: "varchar"
+            }, {
+                name: "bairro",
+                type: "varchar"
+            }, {
+                name: "cidade",
+                type: "varchar"
+            }, {
+                name: "uf",
+                type: "varchar"
+            }, {
 
                 name: 'created_at',
                 type: 'timestamp',
