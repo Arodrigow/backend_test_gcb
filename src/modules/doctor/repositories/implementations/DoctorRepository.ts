@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { CorreiosApi } from "src/shared/externalApi/correiosAPI"
 import { CreateDoctorDto } from "src/modules/doctor/dto/create-doctor.dto";
 import { UpdateDoctorDto } from "src/modules/doctor/dto/update-doctor.dto";
@@ -15,7 +15,7 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
     correiosApi: CorreiosApi = new CorreiosApi();
 
     async createDoctor(data: CreateDoctorDto): Promise<Doctor> {
-        const doctorExists = this.findDoctorByCrm(data.crm);
+        const doctorExists = await this.findDoctorByCrm(data.crm);
         if (doctorExists) {
             throw new DoctorAlreadyExistsException();
         }
@@ -38,7 +38,7 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
     }
 
     async findDoctorByCrm(crm: string): Promise<Doctor> {
-        return await this.findOne({ crm });
+        return await this.findOne({ crm: crm });
     }
 
     async updateDoctor(id: string, data: UpdateDoctorDto): Promise<Doctor> {

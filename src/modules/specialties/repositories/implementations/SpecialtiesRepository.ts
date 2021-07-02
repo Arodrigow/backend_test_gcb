@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { CreateSpecialtyDto } from "src/modules/specialties/dto/create-specialty.dto";
 import { Specialty } from "src/modules/specialties/entities/specialty.entity";
 import { SpecialtyAlreadyExistsException } from "src/shared/errors/SpecialtyAlreadyExistsException";
+import { SpecialtyDoesNotExistException } from "src/shared/errors/SpecialtyDoesNotExistException";
 import { EntityRepository, Repository } from "typeorm";
 import { ISpecialtiesRepository } from "../ISpecialtiesRepository";
 
@@ -23,7 +24,7 @@ export class SpecialtiesRepository extends Repository<Specialty> implements ISpe
         try {
             return await this.findOne(id);
         } catch (e) {
-            throw new SpecialtyAlreadyExistsException();
+            throw new SpecialtyDoesNotExistException();
         }
     }
 
