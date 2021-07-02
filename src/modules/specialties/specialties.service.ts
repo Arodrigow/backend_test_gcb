@@ -15,6 +15,10 @@ export class SpecialtiesService {
     return await this.specialtiesRepository.createSpecialty(createSpecialtyDto);
   }
 
+  async findAll() {
+    return await this.specialtiesRepository.findAll();
+  }
+
   async remove(id: string) {
     return await this.specialtiesRepository.deleteSpecialty(id);
   }
