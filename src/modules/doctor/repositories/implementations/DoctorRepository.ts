@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { CorreiosApi } from "src/shared/externalApi/correiosAPI"
-import { CreateDoctorDto } from "src/modules/doctor/dto/create-doctor.dto";
+import { CorreiosApi } from "src/shared/externalApi/correiosAPI";
 import { UpdateDoctorDto } from "src/modules/doctor/dto/update-doctor.dto";
 import { Doctor } from "src/modules/doctor/entities/doctor.entity";
 import { EntityRepository, Repository } from "typeorm";
@@ -8,23 +7,21 @@ import { IDoctorRepository } from "../IDoctorRepository";
 import { DoctorAlreadyExistsException } from "src/shared/errors/DoctorAlreadyExistsException";
 import { DoctorDoesNotExistException } from "src/shared/errors/DoctorDoesNotExistException";
 
+import { CreateDoctorDto } from "../../dto/create-doctor.dto";
+
 @Injectable()
 @EntityRepository(Doctor)
 export class DoctorRepository extends Repository<Doctor> implements IDoctorRepository {
 
-    correiosApi: CorreiosApi = new CorreiosApi();
-
-    async createDoctor(data: CreateDoctorDto): Promise<Doctor> {
-        const doctorExists = await this.findDoctorByCrm(data.crm);
+    async createDoctor(createDoctorDto: CreateDoctorDto): Promise<Doctor> {
+        const doctorExists = await this.findDoctorByCrm(createDoctorDto.crm);
         if (doctorExists) {
             throw new DoctorAlreadyExistsException();
         }
+        const end = await CorreiosApi.findAddress(createDoctorDto.cep);
+        Object.assign(createDoctorDto, end);
 
-        const end = await this.correiosApi.findAddress(data.cep);
-
-        Object.assign(data, end);
-
-        const doctorCreated = this.create(data);
+        const doctorCreated = this.create(createDoctorDto);
         return await this.save(doctorCreated);
 
     }

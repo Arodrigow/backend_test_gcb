@@ -1,28 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateDoctorDto } from './dto/create-doctor.dto';
+import { Specialty } from '../specialties/entities/specialty.entity';
+import { SpecialtiesRepository } from '../specialties/repositories/implementations/SpecialtiesRepository';
+import { ISpecialtiesRepository } from '../specialties/repositories/ISpecialtiesRepository';
+import { SaveDoctorDto } from './dto/save-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
-import { Doctor } from './entities/doctor.entity'
+import { ViewDoctorDto } from './dto/view-doctor.dto';
 import { IDoctorRepository } from './repositories/IDoctorRepository';
 import { DoctorRepository } from './repositories/implementations/DoctorRepository';
+import { toCreateDoctorDtoMap } from './mapper/toCreateDoctorMap';
+import { toViewDoctorDtoMap } from './mapper/toViewDoctorDtoMap';
 
 @Injectable()
 export class DoctorService {
 
   constructor(
     @InjectRepository(DoctorRepository)
-    private doctorRepository: IDoctorRepository) { }
+    private doctorRepository: IDoctorRepository,
+    @InjectRepository(SpecialtiesRepository)
+    private specialtiesRepository: ISpecialtiesRepository) { }
 
-  async create(createDoctorDto: CreateDoctorDto): Promise<Doctor> {
-    return await this.doctorRepository.createDoctor(createDoctorDto);
+  async create(saveDoctorDto: SaveDoctorDto): Promise<ViewDoctorDto> {
+
+    const specialties: Specialty[] = [];
+
+    saveDoctorDto.specialties.forEach(async specialty =>
+      specialties.push(await this.specialtiesRepository.findByName(specialty)))
+
+    const createDoctorDto = toCreateDoctorDtoMap.toDto(saveDoctorDto, specialties);
+
+    return toViewDoctorDtoMap.toDto(await this.doctorRepository.createDoctor(createDoctorDto));
   }
 
-  async update(id: string, updateDoctorDto: UpdateDoctorDto): Promise<Doctor> {
-    return await this.doctorRepository.updateDoctor(id, updateDoctorDto);
+  async update(id: string, updateDoctorDto: UpdateDoctorDto): Promise<ViewDoctorDto> {
+    return toViewDoctorDtoMap.toDto(await this.doctorRepository.updateDoctor(id, updateDoctorDto));
   }
 
-  async findOne(id: string): Promise<Doctor> {
-    return await this.doctorRepository.findDoctorById(id);
+  async findOne(id: string): Promise<ViewDoctorDto> {
+    return toViewDoctorDtoMap.toDto(await this.doctorRepository.findDoctorById(id));
   }
 
   async remove(id: string): Promise<void> {

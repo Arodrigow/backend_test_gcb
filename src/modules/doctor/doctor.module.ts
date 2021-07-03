@@ -4,11 +4,11 @@ import { DoctorController } from './doctor.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DoctorRepository } from './repositories/implementations/DoctorRepository';
-import { CorreiosApi } from 'src/shared/externalApi/correiosAPI';
+import { SpecialtiesRepository } from '../specialties/repositories/implementations/SpecialtiesRepository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DoctorRepository])],
+  imports: [TypeOrmModule.forFeature([DoctorRepository]), TypeOrmModule.forFeature([SpecialtiesRepository])],
   controllers: [DoctorController],
-  providers: [DoctorService, CorreiosApi]
+  providers: [DoctorService]
 })
 export class DoctorModule { }
