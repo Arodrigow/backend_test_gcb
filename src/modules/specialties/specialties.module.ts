@@ -7,6 +7,7 @@ import { SpecialtiesRepository } from './repositories/implementations/Specialtie
 @Module({
   imports: [TypeOrmModule.forFeature([SpecialtiesRepository])],
   controllers: [SpecialtiesController],
-  providers: [SpecialtiesService]
+  providers: [SpecialtiesService],
+  exports: [TypeOrmModule]
 })
 export class SpecialtiesModule { }
