@@ -11,6 +11,7 @@ import { ISpecialtiesRepository } from "../ISpecialtiesRepository";
 export class SpecialtiesRepository extends Repository<Specialty> implements ISpecialtiesRepository {
 
     async createSpecialty(createSpecialtyDto: CreateSpecialtyDto): Promise<Specialty> {
+
         const specialtyExists = await this.findByName(createSpecialtyDto.name);
         if (specialtyExists) {
             throw new SpecialtyAlreadyExistsException();
@@ -21,19 +22,19 @@ export class SpecialtiesRepository extends Repository<Specialty> implements ISpe
     }
 
     async findById(id: string): Promise<Specialty> {
-        try {
-            return await this.findOne(id);
-        } catch (e) {
+
+        const specialty = await this.findOne(id);
+        if (!specialty) {
             throw new SpecialtyDoesNotExistException();
         }
+        return specialty;
     }
 
     async findByName(name: string): Promise<Specialty> {
-        try {
-            return await this.findOne({ name });
-        } catch (e) {
-            throw new SpecialtyDoesNotExistException();
-        }
+
+        const specialty = await this.findOne({ name });
+
+        return specialty;
     }
 
     async findAll(): Promise<Specialty[]> {
