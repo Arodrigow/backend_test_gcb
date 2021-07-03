@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { CorreiosApi } from "src/shared/externalApi/correiosAPI";
-import { UpdateDoctorDto } from "src/modules/doctor/dto/update-doctor.dto";
 import { Doctor } from "src/modules/doctor/entities/doctor.entity";
 import { EntityRepository, Repository } from "typeorm";
 import { IDoctorRepository } from "../IDoctorRepository";
@@ -8,6 +7,7 @@ import { DoctorAlreadyExistsException } from "src/shared/errors/DoctorAlreadyExi
 import { DoctorDoesNotExistException } from "src/shared/errors/DoctorDoesNotExistException";
 
 import { CreateDoctorDto } from "../../dto/create-doctor.dto";
+import { CreateUpdateDoctorDto } from "../../dto/create-update-doctor.dto";
 
 @Injectable()
 @EntityRepository(Doctor)
@@ -38,11 +38,15 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
         return await this.findOne({ crm: crm });
     }
 
-    async updateDoctor(id: string, data: UpdateDoctorDto): Promise<Doctor> {
-        const doctorExist = await this.findDoctorById(id);
-        const doctorUpdated = this.merge(doctorExist, data);
+    async updateDoctor(id: string, data: CreateUpdateDoctorDto): Promise<Doctor> {
 
-        return await this.save(doctorUpdated);
+        try {
+            const doctorExist = await this.findDoctorById(id);
+            Object.assign(doctorExist, data)
+            return await this.save(doctorExist);
+        } catch (err) {
+            throw new DoctorDoesNotExistException();
+        }
     }
     async deleteDoctor(id: string): Promise<void> {
         await this.findDoctorById(id);

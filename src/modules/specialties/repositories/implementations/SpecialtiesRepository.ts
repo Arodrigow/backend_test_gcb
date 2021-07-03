@@ -29,7 +29,11 @@ export class SpecialtiesRepository extends Repository<Specialty> implements ISpe
     }
 
     async findByName(name: string): Promise<Specialty> {
-        return await this.findOne({ name });
+        try {
+            return await this.findOne({ name });
+        } catch (e) {
+            throw new SpecialtyDoesNotExistException();
+        }
     }
 
     async findAll(): Promise<Specialty[]> {

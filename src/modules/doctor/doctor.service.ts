@@ -10,6 +10,7 @@ import { IDoctorRepository } from './repositories/IDoctorRepository';
 import { DoctorRepository } from './repositories/implementations/DoctorRepository';
 import { toCreateDoctorDtoMap } from './mapper/toCreateDoctorMap';
 import { toViewDoctorDtoMap } from './mapper/toViewDoctorDtoMap';
+import { toUpdateDoctorDtoMap } from './mapper/toUpdateDoctorMap';
 
 @Injectable()
 export class DoctorService {
@@ -33,7 +34,14 @@ export class DoctorService {
   }
 
   async update(id: string, updateDoctorDto: UpdateDoctorDto): Promise<ViewDoctorDto> {
-    return toViewDoctorDtoMap.toDto(await this.doctorRepository.updateDoctor(id, updateDoctorDto));
+    const specialties: Specialty[] = [];
+
+    updateDoctorDto.specialties.forEach(async specialty =>
+      specialties.push(await this.specialtiesRepository.findByName(specialty)))
+    const updaterDto = toUpdateDoctorDtoMap.toDto(updateDoctorDto, specialties);
+
+    return toViewDoctorDtoMap.toDto(await this.doctorRepository.updateDoctor(id, updaterDto));
+
   }
 
   async findOne(id: string): Promise<ViewDoctorDto> {
