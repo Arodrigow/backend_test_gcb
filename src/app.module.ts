@@ -17,6 +17,7 @@ import { SpecialtiesModule } from './modules/specialties/specialties.module';
       autoLoadEntities: false,
       synchronize: false,
       database: "doctors_api",
+      migrationsRun: true,
       migrations: [__dirname + "/database/migrations/*{.ts,.js}"],
       cli: {
         "migrationsDir": __dirname + "/database/migrations"
