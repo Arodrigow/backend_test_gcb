@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { DoctorModule } from './modules/doctor/doctor.module';
 import { SpecialtiesModule } from './modules/specialties/specialties.module';
+import { ValidationYup } from './shared/middlewares/validationYup';
 
 
 @Module({
@@ -28,6 +29,13 @@ import { SpecialtiesModule } from './modules/specialties/specialties.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {
+export class AppModule implements NestModule {
   constructor(private connection: Connection) { }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ValidationYup)
+      .forRoutes(
+        { path: 'doctor', method: RequestMethod.POST },
+        { path: 'doctor', method: RequestMethod.PATCH })
+  }
 }

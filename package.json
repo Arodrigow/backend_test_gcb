@@ -38,7 +38,8 @@
     "rxjs": "^6.6.6",
     "soap": "^0.39.0",
     "typeorm": "^0.2.34",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
@@ -50,6 +51,7 @@
     "@types/soap": "^0.21.0",
     "@types/supertest": "^2.0.10",
     "@types/uuid": "^8.3.0",
+    "@types/yup": "^0.29.12",
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.19.0",
     "eslint": "^7.22.0",
