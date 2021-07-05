@@ -10,4 +10,5 @@ export interface IDoctorRepository {
     updateDoctor(id: string, data: CreateUpdateDoctorDto): Promise<Doctor>;
     deleteDoctor(id: string): Promise<void>;
     recoverDoctor(id: string);
+    searchDoctor(params): Promise<Doctor[]>;
 }

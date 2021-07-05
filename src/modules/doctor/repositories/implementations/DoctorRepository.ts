@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CorreiosApi } from "src/shared/externalApi/correiosAPI";
 import { Doctor } from "src/modules/doctor/entities/doctor.entity";
-import { EntityRepository, Repository } from "typeorm";
+import { EntityRepository, ILike, Repository } from "typeorm";
 import { IDoctorRepository } from "../IDoctorRepository";
 import { DoctorAlreadyExistsException } from "src/shared/errors/DoctorAlreadyExistsException";
 import { DoctorDoesNotExistException } from "src/shared/errors/DoctorDoesNotExistException";
@@ -57,5 +57,104 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
         await this.findDoctorById(id);
 
         return await this.restore(id);
+    }
+
+    async searchDoctor({
+        name,
+        crm,
+        landline_phone,
+        mobile_phone,
+        cep,
+        end,
+        bairro,
+        cidade,
+        uf
+    }): Promise<Doctor[]> {
+        if (name) {
+            return this.find({
+                relations: ["specialties"],
+                loadRelationIds: false,
+                where: {
+                    name: ILike(name)
+                }
+            })
+        }
+
+        if (crm) {
+            return this.find({
+                relations: ["specialties"],
+                loadRelationIds: false,
+                where: {
+                    crm: ILike(crm)
+                }
+            })
+        }
+        if (landline_phone) {
+            return this.find({
+                relations: ["specialties"],
+                loadRelationIds: false,
+                where: {
+                    landline_phone: ILike(landline_phone)
+                }
+            })
+        }
+        if (mobile_phone) {
+            return this.find({
+                relations: ["specialties"],
+                loadRelationIds: false,
+                where: {
+                    mobile_phone: ILike(mobile_phone)
+                }
+            })
+        }
+        if (cep) {
+            return this.find({
+                relations: ["specialties"],
+                loadRelationIds: false,
+                where: {
+                    cep: ILike(cep)
+                }
+            })
+        }
+
+        if (end) {
+            return this.find({
+                relations: ["specialties"],
+                loadRelationIds: false,
+                where: {
+                    end: ILike(end)
+                }
+            })
+        }
+
+        if (bairro) {
+            return this.find({
+                relations: ["specialties"],
+                loadRelationIds: false,
+                where: {
+                    bairro: ILike(bairro)
+                }
+            })
+        }
+
+        if (cidade) {
+            return this.find({
+                relations: ["specialties"],
+                loadRelationIds: false,
+                where: {
+                    cidade: ILike(cidade)
+                }
+            })
+        }
+
+        if (uf) {
+            return this.find({
+                relations: ["specialties"],
+                loadRelationIds: false,
+                where: {
+                    uf: ILike(uf)
+                }
+            })
+        }
     }
 }

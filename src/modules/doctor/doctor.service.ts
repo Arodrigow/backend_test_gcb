@@ -11,6 +11,7 @@ import { DoctorRepository } from './repositories/implementations/DoctorRepositor
 import { toCreateDoctorDtoMap } from './mapper/toCreateDoctorMap';
 import { toViewDoctorDtoMap } from './mapper/toViewDoctorDtoMap';
 import { toUpdateDoctorDtoMap } from './mapper/toUpdateDoctorMap';
+import { Doctor } from './entities/doctor.entity';
 
 @Injectable()
 export class DoctorService {
@@ -54,5 +55,15 @@ export class DoctorService {
 
   async recover(id: string): Promise<void> {
     await this.doctorRepository.recoverDoctor(id);
+  }
+
+  async search(params): Promise<ViewDoctorDto[]> {
+
+    const doctorList: Doctor[] = await this.doctorRepository.searchDoctor(params);
+    const listSearchedDoctors: ViewDoctorDto[] = [];
+
+    doctorList.forEach(doctor => listSearchedDoctors.push(toViewDoctorDtoMap.toDto(doctor)));
+
+    return listSearchedDoctors;
   }
 }

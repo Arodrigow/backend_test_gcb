@@ -23,7 +23,6 @@ export class Doctor {
     cep: string;
 
     @Column()
-
     end?: string;
 
     @Column()
