@@ -36,6 +36,6 @@ export class AppModule implements NestModule {
     consumer.apply(ValidationYup)
       .forRoutes(
         { path: 'doctor', method: RequestMethod.POST },
-        { path: 'doctor', method: RequestMethod.PATCH })
+        { path: 'doctor/:id', method: RequestMethod.PATCH })
   }
 }
