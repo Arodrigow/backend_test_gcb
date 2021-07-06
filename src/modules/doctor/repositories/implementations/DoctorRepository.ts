@@ -40,13 +40,20 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
 
     async updateDoctor(id: string, data: CreateUpdateDoctorDto): Promise<Doctor> {
 
-        try {
-            const doctorExist = await this.findDoctorById(id);
-            Object.assign(doctorExist, data)
-            return await this.save(doctorExist);
-        } catch (err) {
+        if (data.cep) {
+            const end = await CorreiosApi.findAddress(data.cep);
+            Object.assign(data, end);
+        }
+
+        const doctorExist = await this.findDoctorById(id);
+        if (!doctorExist) {
             throw new DoctorDoesNotExistException();
         }
+
+        this.merge(doctorExist, data);
+
+        return await this.save(doctorExist);
+
     }
     async deleteDoctor(id: string): Promise<void> {
         await this.findDoctorById(id);

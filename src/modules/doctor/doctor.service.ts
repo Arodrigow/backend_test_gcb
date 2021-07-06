@@ -36,10 +36,16 @@ export class DoctorService {
 
   async update(id: string, updateDoctorDto: UpdateDoctorDto): Promise<ViewDoctorDto> {
     const specialties: Specialty[] = [];
+    let updaterDto;
+
+    if (!updateDoctorDto.specialties) {
+      updaterDto = toUpdateDoctorDtoMap.toDto(updateDoctorDto, specialties);
+      return toViewDoctorDtoMap.toDto(await this.doctorRepository.updateDoctor(id, updaterDto));
+    }
 
     updateDoctorDto.specialties.forEach(async specialty =>
-      specialties.push(await this.specialtiesRepository.findByName(specialty)))
-    const updaterDto = toUpdateDoctorDtoMap.toDto(updateDoctorDto, specialties);
+      specialties.push(await this.specialtiesRepository.findByName(specialty)));
+    updaterDto = toUpdateDoctorDtoMap.toDto(updateDoctorDto, specialties);
 
     return toViewDoctorDtoMap.toDto(await this.doctorRepository.updateDoctor(id, updaterDto));
 
