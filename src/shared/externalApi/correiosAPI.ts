@@ -13,7 +13,14 @@ export class CorreiosApi {
         }).then((result) => {
             response = result[0].return;
         })
-        return response;
+
+        return {
+            end: response.end,
+            bairro: response.bairro,
+            cidade: response.cidade,
+            uf: response.uf,
+        }
     }
 }
+
 
