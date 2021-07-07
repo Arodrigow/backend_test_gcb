@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CreateSpecialtyDto } from "src/modules/specialties/dto/create-specialty.dto";
-import { Specialty } from "src/modules/specialties/entities/specialty.entity";
+import { Specialty } from "../../entities/specialty.entity";
 import { SpecialtyAlreadyExistsException } from "src/shared/errors/SpecialtyAlreadyExistsException";
 import { SpecialtyDoesNotExistException } from "src/shared/errors/SpecialtyDoesNotExistException";
 import { EntityRepository, Repository } from "typeorm";

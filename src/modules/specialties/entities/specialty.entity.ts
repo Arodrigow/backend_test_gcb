@@ -1,4 +1,4 @@
-import { Doctor } from "src/modules/doctor/entities/doctor.entity";
+import { Doctor } from "../../doctor/entities/doctor.entity";
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { v4 as uuidV4 } from 'uuid';
 

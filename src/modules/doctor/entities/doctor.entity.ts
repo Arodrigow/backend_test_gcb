@@ -1,4 +1,4 @@
-import { Specialty } from 'src/modules/specialties/entities/specialty.entity';
+import { Specialty } from '../../specialties/entities/specialty.entity';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
