@@ -54,7 +54,9 @@ export class DoctorService {
   async findOne(id: string): Promise<ViewDoctorDto> {
     return toViewDoctorDtoMap.toDto(await this.doctorRepository.findDoctorById(id));
   }
-
+  async findByCrm(crm: string): Promise<Doctor> {
+    return await this.doctorRepository.findDoctorByCrm(crm);
+  }
   async remove(id: string): Promise<void> {
     await this.doctorRepository.deleteDoctor(id);
   }
@@ -71,5 +73,9 @@ export class DoctorService {
     doctorList.forEach(doctor => listSearchedDoctors.push(toViewDoctorDtoMap.toDto(doctor)));
 
     return listSearchedDoctors;
+  }
+
+  async deleteAll() {
+    await this.doctorRepository.deleteAll();
   }
 }
