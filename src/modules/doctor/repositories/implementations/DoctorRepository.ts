@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CorreiosApi } from "src/shared/externalApi/correiosAPI";
-import { Doctor } from "src/modules/doctor/entities/doctor.entity";
+import { Doctor } from "../../entities/doctor.entity";
 import { EntityRepository, ILike, Repository } from "typeorm";
 import { IDoctorRepository } from "../IDoctorRepository";
 import { DoctorAlreadyExistsException } from "src/shared/errors/DoctorAlreadyExistsException";
@@ -8,6 +8,9 @@ import { DoctorDoesNotExistException } from "src/shared/errors/DoctorDoesNotExis
 
 import { CreateDoctorDto } from "../../dto/create-doctor.dto";
 import { CreateUpdateDoctorDto } from "../../dto/create-update-doctor.dto";
+import { CorreiosAPIException } from "src/shared/errors/CorreiosAPIException";
+import { SpecialtyAlreadyExistsException } from "src/shared/errors/SpecialtyAlreadyExistsException";
+import { SpecialtyDoesNotExistException } from "src/shared/errors/SpecialtyDoesNotExistException";
 
 @Injectable()
 @EntityRepository(Doctor)
@@ -15,14 +18,24 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
 
     async createDoctor(createDoctorDto: CreateDoctorDto): Promise<Doctor> {
         const doctorExists = await this.findDoctorByCrm(createDoctorDto.crm);
+        let end;
         if (doctorExists) {
             throw new DoctorAlreadyExistsException();
         }
-        const end = await CorreiosApi.findAddress(createDoctorDto.cep);
+        try {
+            end = await CorreiosApi.findAddress(createDoctorDto.cep);
+        } catch (e) {
+            throw new CorreiosAPIException();
+        }
+
         Object.assign(createDoctorDto, end);
 
-        const doctorCreated = this.create(createDoctorDto);
-        return await this.save(doctorCreated);
+        try {
+            const doctorCreated = this.create(createDoctorDto);
+            return await this.save(doctorCreated);
+        } catch {
+            throw new SpecialtyAlreadyExistsException();
+        }
 
     }
 
@@ -41,8 +54,12 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
     async updateDoctor(id: string, data: CreateUpdateDoctorDto): Promise<Doctor> {
 
         if (data.cep) {
-            const end = await CorreiosApi.findAddress(data.cep);
-            Object.assign(data, end);
+            try {
+                const end = await CorreiosApi.findAddress(data.cep);
+                Object.assign(data, end);
+            } catch (e) {
+                throw new CorreiosAPIException();
+            }
         }
 
         const doctorExist = await this.findDoctorById(id);
@@ -51,8 +68,11 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
         }
 
         this.merge(doctorExist, data);
-
-        return await this.save(doctorExist);
+        try {
+            return await this.save(doctorExist);
+        } catch (e) {
+            throw new SpecialtyDoesNotExistException();
+        }
 
     }
     async deleteDoctor(id: string): Promise<void> {
@@ -65,6 +85,9 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
 
         return await this.restore(id);
     }
+    async deleteAll() {
+        await this.query("TRUNCATE doctors CASCADE");
+    }
 
     async searchDoctor({
         name,
@@ -75,93 +98,102 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
         end,
         bairro,
         cidade,
-        uf
+        uf,
+        specialty
     }): Promise<Doctor[]> {
         if (name) {
-            return this.find({
+            return await this.find({
                 relations: ["specialties"],
                 loadRelationIds: false,
                 where: {
-                    name: ILike(name)
+                    name: ILike("%" + name + "%")
                 }
             })
         }
 
         if (crm) {
-            return this.find({
+            return await this.find({
                 relations: ["specialties"],
                 loadRelationIds: false,
                 where: {
-                    crm: ILike(crm)
+                    crm: ILike("%" + crm + "%")
                 }
             })
         }
         if (landline_phone) {
-            return this.find({
+            return await this.find({
                 relations: ["specialties"],
                 loadRelationIds: false,
                 where: {
-                    landline_phone: ILike(landline_phone)
+                    landline_phone: ILike("%" + landline_phone + "%")
                 }
             })
         }
         if (mobile_phone) {
-            return this.find({
+            return await this.find({
                 relations: ["specialties"],
                 loadRelationIds: false,
                 where: {
-                    mobile_phone: ILike(mobile_phone)
+                    mobile_phone: ILike("%" + mobile_phone + "%")
                 }
             })
         }
         if (cep) {
-            return this.find({
+            return await this.find({
                 relations: ["specialties"],
                 loadRelationIds: false,
                 where: {
-                    cep: ILike(cep)
+                    cep: ILike("%" + cep + "%")
                 }
             })
         }
 
         if (end) {
-            return this.find({
+            return await this.find({
                 relations: ["specialties"],
                 loadRelationIds: false,
                 where: {
-                    end: ILike(end)
+                    end: ILike("%" + end + "%")
                 }
             })
         }
 
         if (bairro) {
-            return this.find({
+            return await this.find({
                 relations: ["specialties"],
                 loadRelationIds: false,
                 where: {
-                    bairro: ILike(bairro)
+                    bairro: ILike("%" + bairro + "%")
                 }
             })
         }
 
         if (cidade) {
-            return this.find({
+            return await this.find({
                 relations: ["specialties"],
                 loadRelationIds: false,
                 where: {
-                    cidade: ILike(cidade)
+                    cidade: ILike("%" + cidade + "%")
                 }
             })
         }
 
         if (uf) {
-            return this.find({
+            return await this.find({
                 relations: ["specialties"],
                 loadRelationIds: false,
                 where: {
-                    uf: ILike(uf)
+                    uf: ILike("%" + uf + "%")
                 }
             })
+        }
+
+        if (specialty) {
+            const doctors = await this.createQueryBuilder("doctors")
+                .innerJoinAndSelect("doctors.specialties", "specialty")
+                .where("specialty.name ILIKE :name", { name: `%${specialty}%` })
+                .getMany();
+            return doctors;
         }
     }
 }

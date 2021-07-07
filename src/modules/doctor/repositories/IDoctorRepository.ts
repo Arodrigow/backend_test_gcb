@@ -5,6 +5,7 @@ import { Doctor } from "../entities/doctor.entity";
 
 export interface IDoctorRepository {
     createDoctor(data: CreateDoctorDto): Promise<Doctor>;
+    deleteAll();
     findDoctorById(id: string): Promise<Doctor>;
     findDoctorByCrm(id: string): Promise<Doctor>;
     updateDoctor(id: string, data: CreateUpdateDoctorDto): Promise<Doctor>;
