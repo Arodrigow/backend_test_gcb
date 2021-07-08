@@ -262,7 +262,7 @@ describe('DoctorService', () => {
           }
         ]
       }
-      expect((await doctorService.findOne(id))).toStrictEqual(result);
+      expect((await doctorService.findOne(id))).toEqual(result);
     }), 20000;
 
     it("should not be able to find a non-existent doctor", async () => {
