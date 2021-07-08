@@ -189,11 +189,17 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
         }
 
         if (specialty) {
-            const doctors = await this.createQueryBuilder("doctors")
+            const doctors: Doctor[] = []
+            const doctorsQ = await this.createQueryBuilder("doctors")
                 .innerJoinAndSelect("doctors.specialties", "specialty")
                 .where("specialty.name ILIKE :name", { name: `%${specialty}%` })
-                .getMany();
-            return doctors;
+                .getMany()
+
+            for (const x in doctorsQ) {
+                doctors.push(await this.findDoctorById(doctorsQ[x].id))
+            }
+
+            return doctors
         }
     }
 }
