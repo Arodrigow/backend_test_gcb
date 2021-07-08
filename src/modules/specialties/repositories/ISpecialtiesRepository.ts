@@ -7,4 +7,5 @@ export interface ISpecialtiesRepository {
     findById(id: string): Promise<Specialty>;
     findByName(name: string): Promise<Specialty>;
     deleteSpecialty(id: string): Promise<void>;
+    deleteSpecialtyByName(name: string): Promise<void>;
 }

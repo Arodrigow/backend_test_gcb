@@ -21,4 +21,9 @@ export class SpecialtiesService {
   async remove(id: string) {
     return await this.specialtiesRepository.deleteSpecialty(id);
   }
+
+
+  async removeByName(name: string) {
+    return await this.specialtiesRepository.deleteSpecialtyByName(name);
+  }
 }

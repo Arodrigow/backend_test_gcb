@@ -23,11 +23,13 @@ export class SpecialtiesRepository extends Repository<Specialty> implements ISpe
 
     async findById(id: string): Promise<Specialty> {
 
-        const specialty = await this.findOne(id);
-        if (!specialty) {
+        try {
+            const specialty = await this.findOne(id);
+
+            return specialty;
+        } catch (e) {
             throw new SpecialtyDoesNotExistException();
         }
-        return specialty;
     }
 
     async findByName(name: string): Promise<Specialty> {
@@ -45,5 +47,7 @@ export class SpecialtiesRepository extends Repository<Specialty> implements ISpe
         await this.findById(id);
         await this.delete(id);
     }
-
+    async deleteSpecialtyByName(name: string): Promise<void> {
+        await this.delete({ name });
+    }
 }
