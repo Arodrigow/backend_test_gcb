@@ -201,7 +201,6 @@ describe('DoctorService', () => {
       expect(updatedDoctor.cidade).toStrictEqual(result.cidade);
       expect(updatedDoctor.uf).toStrictEqual(result.uf);
     }, 20000);
-
     it("should not be able to update a doctor with an invalid CEP", async () => {
       await doctorService.create(doctor);
 
@@ -241,7 +240,7 @@ describe('DoctorService', () => {
     it("should be able to find a doctor", async () => {
       await doctorService.create(doctor);
 
-      const { id } = await doctorService.findByCrm(doctor.crm);
+      const doc = await doctorService.findByCrm(doctor.crm);
 
       const result: ViewDoctorDto = {
         name: "mock",
@@ -262,7 +261,8 @@ describe('DoctorService', () => {
           }
         ]
       }
-      expect((await doctorService.findOne(id))).toEqual(result);
+      const doctorFound = await doctorService.findOne(doc.id)
+      expect(doctorFound).toEqual(result);
     }), 20000;
 
     it("should not be able to find a non-existent doctor", async () => {
@@ -278,9 +278,9 @@ describe('DoctorService', () => {
     it("should be able to soft delete a doctor", async () => {
       await doctorService.create(doctor);
 
-      const { id } = await doctorService.findByCrm(doctor.crm);
+      const doc = await doctorService.findByCrm(doctor.crm);
 
-      expect(doctorService.remove(id)).resolves.not.toThrow();
+      await expect(doctorService.remove(doc.id)).resolves.not.toThrow();
     }), 20000;
 
     it("should not be able to soft delete a non-existent doctor", async () => {
@@ -295,10 +295,10 @@ describe('DoctorService', () => {
   describe("Recover", () => {
     it("should be able to recover a deleted doctor", async () => {
       await doctorService.create(doctor);
-      const { id } = await doctorService.findByCrm(doctor.crm);
-      await doctorService.remove(id);
+      const doc = await doctorService.findByCrm(doctor.crm);
+      await doctorService.remove(doc.id);
 
-      expect(doctorService.recover(id)).resolves.not.toThrow();
+      expect(doctorService.recover(doc.id)).resolves.not.toThrow();
     }), 20000;
 
     it("should not be able to recover a non-existent doctor", async () => {
