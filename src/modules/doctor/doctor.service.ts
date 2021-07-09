@@ -12,6 +12,7 @@ import { toCreateDoctorDtoMap } from './mapper/toCreateDoctorMap';
 import { toViewDoctorDtoMap } from './mapper/toViewDoctorDtoMap';
 import { toUpdateDoctorDtoMap } from './mapper/toUpdateDoctorMap';
 import { Doctor } from './entities/doctor.entity';
+import { InvalidQueryException } from 'src/shared/errors/InvalidQueryException';
 
 @Injectable()
 export class DoctorService {
@@ -66,8 +67,13 @@ export class DoctorService {
   }
 
   async search(params): Promise<ViewDoctorDto[]> {
+    let doctorList: Doctor[];
+    try {
+      doctorList = await this.doctorRepository.searchDoctor(params);
+    } catch (e) {
+      throw new InvalidQueryException();
+    }
 
-    const doctorList: Doctor[] = await this.doctorRepository.searchDoctor(params);
     const listSearchedDoctors: ViewDoctorDto[] = [];
 
     doctorList.forEach(doctor => listSearchedDoctors.push(toViewDoctorDtoMap.toDto(doctor)));
