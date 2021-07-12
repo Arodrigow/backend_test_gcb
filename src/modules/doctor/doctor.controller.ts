@@ -23,6 +23,11 @@ export class DoctorController {
     return this.doctorService.findOne(id);
   }
 
+  @ApiResponse({ status: 200, description: 'Successfully listed all doctors.' })
+  @Get()
+  listAll() {
+    return this.doctorService.listAll();
+  }
 
   @Get('search/q')
   @ApiResponse({ status: 200, description: 'Search successfull.' })

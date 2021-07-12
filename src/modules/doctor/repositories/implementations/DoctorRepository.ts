@@ -51,6 +51,10 @@ export class DoctorRepository extends Repository<Doctor> implements IDoctorRepos
         return await this.findOne({ crm: crm });
     }
 
+    async listAll(): Promise<Doctor[]> {
+        return await this.find();
+    }
+
     async updateDoctor(id: string, data: CreateUpdateDoctorDto): Promise<Doctor> {
 
         if (data.cep) {

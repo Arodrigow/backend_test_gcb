@@ -8,6 +8,7 @@ export interface IDoctorRepository {
     deleteAll();
     findDoctorById(id: string): Promise<Doctor>;
     findDoctorByCrm(id: string): Promise<Doctor>;
+    listAll(): Promise<Doctor[]>;
     updateDoctor(id: string, data: CreateUpdateDoctorDto): Promise<Doctor>;
     deleteDoctor(id: string): Promise<void>;
     recoverDoctor(id: string);
